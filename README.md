@@ -96,8 +96,11 @@ See [Retirement Model Documentation](docs/MODEL_RETIREMENT.md) for formulas and 
 
 ## Screenshots
 
-![Planner Wizard](docs/images/planner_placeholder.png)
-*The Planner Wizard collects your financial and skill data.*
+![Landing Page](docs/images/landing_page.png)
+*The cosmic landing page visualizes your retirement journey as orbits through space.*
 
-![Dashboard Results](docs/images/dashboard_placeholder.png)
-*The Dashboard visualizes your optimal retirement trajectories.*
+![Planner Wizard](docs/images/planner_wizard.png)
+*The multi-step wizard collects your financial profile and skills with a glassmorphic design.*
+
+![Dashboard Results](docs/images/dashboard_results.png)
+*Interactive scenario cards and comparison charts show your optimal retirement trajectories.*
