@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+@theme {
+    --color-space-950: #020616;
+    --color-space-900: #050819;
+    --color-space-800: #0B1120;
+
+    --color-cosmic-500: #A855F7;
+    --color-cosmic-600: #9333EA;
+
+    --color-cyan-400: #22D3EE;
+
+    --animate-slow-spin: spin 20s linear infinite;
+    --animate-reverse-spin: spin 25s linear infinite reverse;
+    --animate-float: float 6s ease-in-out infinite;
+}
+
+@layer base {
+    body {
+        @apply bg-space-950 text-gray-50 antialiased selection:bg-cosmic-500/30 selection:text-white;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
