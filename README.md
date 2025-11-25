@@ -95,9 +95,11 @@ See [Retirement Model Documentation](docs/MODEL_RETIREMENT.md) for formulas and 
 -   [ ] **Tax Optimization**: Detailed modeling of 401k vs. Roth vs. Brokerage drawdowns.
 
 ## Screenshots
+<img width="1329" height="945" alt="image" src="https://github.com/user-attachments/assets/e1992885-1cc7-4485-9e74-626a24edff22" />
 
-![Planner Wizard](docs/images/planner_placeholder.png)
-*The Planner Wizard collects your financial and skill data.*
+<img width="1025" height="769" alt="image" src="https://github.com/user-attachments/assets/a24d4034-6c59-4123-b7ca-2c7ea655f952" />
 
-![Dashboard Results](docs/images/dashboard_placeholder.png)
-*The Dashboard visualizes your optimal retirement trajectories.*
+<img width="984" height="850" alt="image" src="https://github.com/user-attachments/assets/9b04523a-d720-4ea2-8206-f428c3108fe6" />
+
+<img width="1385" height="974" alt="image" src="https://github.com/user-attachments/assets/55fd8c4f-6495-4b69-86d7-2af4b6d8af92" />
+
