@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { RetirementScenario } from '../../types/retirement';
+import { SCENARIO_COLORS, type ScenarioId } from '../../constants/scenarios';
 
 interface ComparisonChartProps {
     scenarios: RetirementScenario[];
@@ -13,9 +14,7 @@ const ComparisonChart = ({ scenarios }: ComparisonChartProps) => {
     }));
 
     const getBarColor = (id: string) => {
-        if (id === 'upskill') return '#A855F7'; // cosmic-500
-        if (id === 'geo-arbitrage') return '#22D3EE'; // cyan-400
-        return '#94A3B8'; // slate-400
+        return SCENARIO_COLORS[id as ScenarioId]?.barColor || SCENARIO_COLORS.baseline.barColor;
     };
 
     return (

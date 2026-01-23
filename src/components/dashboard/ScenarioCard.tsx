@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { RetirementScenario } from '../../types/retirement';
 import { ChevronDown, ChevronUp, Target, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SCENARIO_COLORS, type ScenarioId } from '../../constants/scenarios';
 
 interface ScenarioCardProps {
     scenario: RetirementScenario;
@@ -9,29 +10,15 @@ interface ScenarioCardProps {
 
 const ScenarioCard = ({ scenario }: ScenarioCardProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
-
-    const getBorderColor = () => {
-        if (scenario.id === 'upskill') return 'border-cosmic-500/50';
-        if (scenario.id === 'geo-arbitrage') return 'border-cyan-400/50';
-        return 'border-white/10';
-    };
-
-    const getGlowColor = () => {
-        if (scenario.id === 'upskill') return 'shadow-[0_0_20px_rgba(168,85,247,0.2)]';
-        if (scenario.id === 'geo-arbitrage') return 'shadow-[0_0_20px_rgba(34,211,238,0.2)]';
-        return '';
-    };
+    const colors = SCENARIO_COLORS[scenario.id as ScenarioId] || SCENARIO_COLORS.baseline;
 
     return (
         <div
-            className={`relative bg-space-900/50 backdrop-blur-md border rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${getBorderColor()} ${getGlowColor()}`}
+            className={`relative bg-space-900/50 backdrop-blur-md border rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${colors.border} ${colors.glow}`}
         >
             <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${scenario.id === 'upskill' ? 'bg-cosmic-500/20 text-cosmic-300' :
-                            scenario.id === 'geo-arbitrage' ? 'bg-cyan-400/20 text-cyan-300' :
-                                'bg-white/10 text-slate-400'
-                        }`}>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${colors.badge}`}>
                         {scenario.label}
                     </span>
                     <div className="text-right">

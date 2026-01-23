@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { UserProfile, RetirementPathsResponse } from '../types/retirement';
 
 interface ProfileContextType {
@@ -24,11 +24,44 @@ const defaultProfile: UserProfile = {
     lifestyleIntensity: 50,
 };
 
+const PROFILE_STORAGE_KEY = 'retireme_profile';
+const RESULTS_STORAGE_KEY = 'retireme_results';
+
+const loadFromStorage = <T,>(key: string, defaultValue: T): T => {
+    try {
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : defaultValue;
+    } catch (error) {
+        console.error(`Failed to load ${key} from localStorage:`, error);
+        return defaultValue;
+    }
+};
+
+const saveToStorage = <T,>(key: string, value: T): void => {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error(`Failed to save ${key} to localStorage:`, error);
+    }
+};
+
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export const ProfileProvider = ({ children }: { children: ReactNode }) => {
-    const [profile, setProfile] = useState<UserProfile>(defaultProfile);
-    const [results, setResults] = useState<RetirementPathsResponse | null>(null);
+    const [profile, setProfile] = useState<UserProfile>(() =>
+        loadFromStorage(PROFILE_STORAGE_KEY, defaultProfile)
+    );
+    const [results, setResults] = useState<RetirementPathsResponse | null>(() =>
+        loadFromStorage(RESULTS_STORAGE_KEY, null)
+    );
+
+    useEffect(() => {
+        saveToStorage(PROFILE_STORAGE_KEY, profile);
+    }, [profile]);
+
+    useEffect(() => {
+        saveToStorage(RESULTS_STORAGE_KEY, results);
+    }, [results]);
 
     const updateProfile = (updates: Partial<UserProfile>) => {
         setProfile(prev => ({ ...prev, ...updates }));

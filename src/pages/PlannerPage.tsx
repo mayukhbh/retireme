@@ -5,8 +5,16 @@ import { generateRetirementPaths } from '../api/retirement';
 import StepBasics from '../components/inputs/StepBasics';
 import StepSkills from '../components/inputs/StepSkills';
 import StepLifestyle from '../components/inputs/StepLifestyle';
+import ToastContainer from '../components/ui/ToastContainer';
 import { ChevronRight, ChevronLeft, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+interface Toast {
+    id: string;
+    message: string;
+    type: 'error' | 'success' | 'info';
+    duration?: number;
+}
 
 const steps = [
     { id: 'basics', title: 'Basics' },
@@ -19,8 +27,45 @@ const PlannerPage = () => {
     const { profile, setResults } = useProfile();
     const [currentStep, setCurrentStep] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const [toasts, setToasts] = useState<Toast[]>([]);
+
+    const addToast = (message: string, type: 'error' | 'success' | 'info' = 'info', duration = 5000) => {
+        const id = Date.now().toString();
+        setToasts(prev => [...prev, { id, message, type, duration }]);
+    };
+
+    const removeToast = (id: string) => {
+        setToasts(prev => prev.filter(toast => toast.id !== id));
+    };
+
+    const validateStep = (): string | null => {
+        if (currentStep === 0) {
+            if (!profile.currentAge || profile.currentAge < 18 || profile.currentAge > 100) {
+                return 'Please enter a valid age between 18 and 100';
+            }
+            if (profile.targetRetirementAge && profile.targetRetirementAge <= profile.currentAge) {
+                return 'Target retirement age must be greater than current age';
+            }
+            if (!profile.country || profile.country.trim() === '') {
+                return 'Please enter your current country';
+            }
+            if (!profile.annualIncome || profile.annualIncome <= 0) {
+                return 'Please enter a valid annual income';
+            }
+            if (profile.investableAssets < 0 || profile.monthlySavings < 0) {
+                return 'Assets and savings cannot be negative';
+            }
+        }
+        return null;
+    };
 
     const handleNext = async () => {
+        const validationError = validateStep();
+        if (validationError) {
+            addToast(validationError, 'error');
+            return;
+        }
+
         if (currentStep < steps.length - 1) {
             setCurrentStep(prev => prev + 1);
         } else {
@@ -28,10 +73,14 @@ const PlannerPage = () => {
             try {
                 const data = await generateRetirementPaths(profile);
                 setResults(data);
-                navigate('/dashboard');
+                addToast('Retirement trajectory generated successfully!', 'success', 2000);
+                setTimeout(() => navigate('/dashboard'), 500);
             } catch (error) {
                 console.error("Failed to generate paths", error);
-                // In a real app, show error toast
+                const errorMessage = error instanceof Error
+                    ? error.message
+                    : 'Failed to generate retirement paths. Please try again.';
+                addToast(errorMessage, 'error', 7000);
             } finally {
                 setIsLoading(false);
             }
@@ -52,7 +101,9 @@ const PlannerPage = () => {
     };
 
     return (
-        <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <>
+            <ToastContainer toasts={toasts} onClose={removeToast} />
+            <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
             {/* Cosmic Step Indicator */}
             <div className="mb-12 flex justify-center">
                 <div className="relative flex items-center gap-12">
@@ -96,22 +147,27 @@ const PlannerPage = () => {
                 </div>
 
                 <div className="flex justify-between mt-10 pt-6 border-t border-white/10">
-                    <button
-                        onClick={handleBack}
-                        disabled={currentStep === 0 || isLoading}
-                        className={`flex items-center px-6 py-3 text-slate-400 font-medium rounded-lg hover:text-white transition-colors ${currentStep === 0 ? 'opacity-0 pointer-events-none' : ''
-                            }`}
-                    >
-                        <ChevronLeft className="h-5 w-5 mr-1" /> Back
-                    </button>
+                    {currentStep > 0 ? (
+                        <button
+                            onClick={handleBack}
+                            disabled={isLoading}
+                            className="flex items-center px-6 py-3 text-slate-400 font-medium rounded-lg hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            aria-label="Go back to previous step"
+                        >
+                            <ChevronLeft className="h-5 w-5 mr-1" /> Back
+                        </button>
+                    ) : (
+                        <div />
+                    )}
 
                     <button
                         onClick={handleNext}
                         disabled={!isStepValid() || isLoading}
                         className="flex items-center px-8 py-3 bg-cosmic-600 text-white font-bold rounded-full hover:bg-cosmic-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-[0_0_20px_rgba(147,51,234,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.5)] active:scale-95 min-w-[140px] justify-center"
+                        aria-label={currentStep === steps.length - 1 ? 'Generate retirement trajectory' : 'Go to next step'}
                     >
                         {isLoading ? (
-                            <Loader2 className="h-5 w-5 animate-spin" />
+                            <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
                         ) : currentStep === steps.length - 1 ? (
                             'Generate Trajectory'
                         ) : (
@@ -121,6 +177,7 @@ const PlannerPage = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

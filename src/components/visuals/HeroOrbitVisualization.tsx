@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 const HeroOrbitVisualization = () => {
     return (
-        <div className="relative w-[500px] h-[500px] flex items-center justify-center">
+        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center mx-auto px-4 sm:px-0">
             {/* Central Node: You */}
             <div className="absolute z-20 flex flex-col items-center">
                 <motion.div

@@ -1,16 +1,48 @@
+import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useProfile } from '../context/ProfileContext';
 import SummaryPanel from '../components/dashboard/SummaryPanel';
 import ScenarioCard from '../components/dashboard/ScenarioCard';
 import ComparisonChart from '../components/dashboard/ComparisonChart';
+import { SummaryPanelSkeleton, ScenarioCardSkeleton, ComparisonChartSkeleton } from '../components/ui/Skeleton';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DashboardPage = () => {
     const { results } = useProfile();
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Brief loading state for smooth transition
+        const timer = setTimeout(() => setIsLoading(false), 300);
+        return () => clearTimeout(timer);
+    }, []);
 
     if (!results) {
         return <Navigate to="/planner" replace />;
+    }
+
+    if (isLoading) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+                <div className="mb-8">
+                    <div className="h-4 w-32 bg-white/5 rounded mb-4 animate-pulse" />
+                    <div className="h-8 w-48 bg-white/5 rounded animate-pulse" />
+                </div>
+
+                <div className="mb-12">
+                    <SummaryPanelSkeleton />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                    <ScenarioCardSkeleton />
+                    <ScenarioCardSkeleton />
+                    <ScenarioCardSkeleton />
+                </div>
+
+                <ComparisonChartSkeleton />
+            </div>
+        );
     }
 
     return (
