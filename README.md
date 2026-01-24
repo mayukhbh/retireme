@@ -1,14 +1,17 @@
 # RetireMe – AI-Powered Retirement Paths
 
-RetireMe is an intelligent retirement planning application that simulates thousands of possible futures based on your unique skills, assets, and lifestyle choices. It goes beyond simple savings calculators by modeling career growth (upskilling) and geo-arbitrage opportunities to find your most efficient path to financial freedom.
+RetireMe is an intelligent retirement planning application that runs **Monte Carlo simulations** across 100 market scenarios to find your most efficient path to financial freedom. It goes beyond simple savings calculators by modeling career growth (upskilling), geo-arbitrage opportunities, and realistic market volatility.
 
 ## Key Features
 
--   **Multi-Scenario Modeling**: Automatically generates "Baseline", "Skill-Boosted", and "Geo-Arbitrage" retirement paths.
--   **Skill-Based Income Projection**: Estimates potential income increases based on your skill set and proficiency levels.
+-   **Monte Carlo Simulation**: Runs 100 randomized market scenarios per path, giving you probability-based projections instead of single-point estimates.
+-   **Multi-Scenario Modeling**: Automatically generates "Baseline", "Skill Accelerator", and "Geo-Arbitrage" retirement paths.
+-   **Skill-Based Income Projection**: Estimates potential income increases based on your skill set, proficiency levels, and skill category market demand.
 -   **Geo-Arbitrage Engine**: Calculates the impact of relocating to lower cost-of-living areas on your retirement timeline.
--   **Cosmic UI**: A premium, immersive "interstellar" design that visualizes your life trajectory as an orbit.
--   **Privacy-First**: No account required; all simulations run instantly.
+-   **Lifestyle Intensity**: Adjusts expense projections based on your desired lifestyle (Frugal → Comfortable → Luxe).
+-   **Social Security Modeling**: Includes estimated Social Security benefits starting at age 67.
+-   **Cosmic UI**: A premium, immersive dark theme with animated starfield, orbit visualizations, and glassmorphic design.
+-   **Privacy-First**: No account required; all simulations run instantly with no data persistence.
 
 ## Architecture Overview
 
@@ -16,12 +19,12 @@ RetireMe follows a modern client-server architecture:
 
 -   **Frontend**: A React Single Page Application (SPA) built with Vite, TypeScript, and Tailwind CSS. It handles user input via a multi-step wizard and visualizes results using Recharts and Framer Motion.
 -   **Backend**: A high-performance FastAPI (Python) server. It exposes a REST API that accepts user profiles and returns calculated retirement scenarios.
--   **Engine**: A deterministic simulation engine within the backend that processes financial math, inflation adjustments, and career growth factors.
+-   **Engine**: A **Monte Carlo simulation engine** that runs 100 iterations per scenario with randomized market returns and inflation, providing probability distributions rather than deterministic outputs.
 
 ## Tech Stack
 
 -   **Frontend**:
-    -   React 18
+    -   React 19
     -   TypeScript
     -   Tailwind CSS v4
     -   Framer Motion (Animations)
@@ -32,7 +35,6 @@ RetireMe follows a modern client-server architecture:
     -   FastAPI
     -   Uvicorn (ASGI Server)
     -   Pydantic (Data Validation)
-    -   Pytest (Testing)
 
 ## Getting Started
 
@@ -61,10 +63,7 @@ The API will be available at `http://localhost:8000`. API Docs at `http://localh
 ### 2. Frontend Setup
 
 ```bash
-# Open a new terminal and navigate to root
-cd retireme # (if not already there)
-
-# Install dependencies
+# From project root
 npm install
 
 # Start development server
@@ -74,16 +73,24 @@ The app will be available at `http://localhost:5173`.
 
 ## API Overview
 
-The core endpoint is `POST /api/retirement/paths`. It takes a user's financial and skill profile and returns a set of retirement scenarios.
+The core endpoint is `POST /api/retirement/paths`. It takes a user's financial and skill profile and returns a set of retirement scenarios with Monte Carlo-derived probabilities.
 
 See [API Reference](docs/API_REFERENCE.md) for details.
 
 ## Retirement Model Assumptions
 
-The engine uses standard financial modeling principles with specific assumptions for growth and inflation:
--   **Inflation**: 3% annually.
--   **Market Returns**: 4-8% real return based on risk profile.
+The Monte Carlo engine uses the following assumptions:
+
+| Parameter | Conservative | Balanced | Aggressive |
+|-----------|-------------|----------|------------|
+| Mean Return | 5% | 7% | 9% |
+| Volatility (Std Dev) | 6% | 12% | 18% |
+
+-   **Inflation**: 3% annually (with 1% standard deviation).
 -   **Withdrawal Rate**: 4% (Safe Withdrawal Rate).
+-   **Social Security**: 30% of pre-retirement income starting at age 67.
+-   **Skill Income Boost**: Up to 50% based on skill level and category.
+-   **Lifestyle Multiplier**: 0.7x (Frugal) to 1.6x (Luxe) on baseline expenses.
 
 See [Retirement Model Documentation](docs/MODEL_RETIREMENT.md) for formulas and logic.
 
@@ -93,6 +100,7 @@ See [Retirement Model Documentation](docs/MODEL_RETIREMENT.md) for formulas and 
 -   [ ] **Brokerage Integration**: Connect to Plaid/Yodlee for real-time asset tracking.
 -   [ ] **User Accounts**: Save and track multiple scenarios over time.
 -   [ ] **Tax Optimization**: Detailed modeling of 401k vs. Roth vs. Brokerage drawdowns.
+-   [ ] **Hybrid Scenarios**: Combine upskilling + geo-arbitrage in a single path.
 
 ## Screenshots
 
@@ -100,7 +108,11 @@ See [Retirement Model Documentation](docs/MODEL_RETIREMENT.md) for formulas and 
 *The cosmic landing page visualizes your retirement journey as orbits through space.*
 
 ![Planner Wizard](docs/images/planner_wizard.png)
-*The multi-step wizard collects your financial profile and skills with a glassmorphic design.*
+*The multi-step wizard collects your financial profile and skills with a dark glassmorphic design.*
 
 ![Dashboard Results](docs/images/dashboard_results.png)
-*Interactive scenario cards and comparison charts show your optimal retirement trajectories.*
+*Interactive scenario cards show Monte Carlo probability scores and comparison charts.*
+
+## License
+
+MIT

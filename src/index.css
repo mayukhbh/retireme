@@ -5,6 +5,7 @@
     --color-space-900: #050819;
     --color-space-800: #0B1120;
 
+    --color-cosmic-400: #C084FC;
     --color-cosmic-500: #A855F7;
     --color-cosmic-600: #9333EA;
 
@@ -13,22 +14,67 @@
     --animate-slow-spin: spin 20s linear infinite;
     --animate-reverse-spin: spin 25s linear infinite reverse;
     --animate-float: float 6s ease-in-out infinite;
+    --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+    --animate-twinkle: twinkle 3s ease-in-out infinite;
 }
 
 @layer base {
     body {
         @apply bg-space-950 text-gray-50 antialiased selection:bg-cosmic-500/30 selection:text-white;
     }
+
+    /* Custom select dropdown styling for dark mode */
+    select option {
+        @apply bg-space-900 text-white;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-space-950;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply bg-white/10 rounded-full;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply bg-white/20;
+    }
 }
 
 @keyframes float {
-
     0%,
     100% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(-20px);
+    }
+}
+
+@keyframes pulse-glow {
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+}
+
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
     }
 }

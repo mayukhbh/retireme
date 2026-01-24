@@ -1,47 +1,181 @@
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+
+interface OrbitNodeProps {
+    size: number;
+    color: string;
+    glowColor: string;
+    label: string;
+    age: string;
+    isRecommended?: boolean;
+}
+
+const OrbitNode = ({ size, color, glowColor, label, age, isRecommended }: OrbitNodeProps) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <motion.div
+            className="relative cursor-pointer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            whileHover={{ scale: 1.2 }}
+        >
+            {/* Pulse ring for recommended */}
+            {isRecommended && (
+                <motion.div
+                    className="absolute inset-0 rounded-full"
+                    style={{ backgroundColor: color }}
+                    animate={{ scale: [1, 2.5], opacity: [0.4, 0] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                />
+            )}
+
+            {/* Glow */}
+            <div
+                className="absolute inset-[-4px] rounded-full blur-md"
+                style={{ backgroundColor: glowColor, opacity: isHovered ? 0.8 : 0.5 }}
+            />
+
+            {/* Core */}
+            <div
+                className="relative rounded-full"
+                style={{
+                    width: size,
+                    height: size,
+                    backgroundColor: color,
+                    boxShadow: `0 0 ${size}px ${glowColor}`
+                }}
+            />
+
+            {/* Tooltip */}
+            <motion.div
+                initial={{ opacity: 0, y: 5, scale: 0.9 }}
+                animate={{
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 5,
+                    scale: isHovered ? 1 : 0.9
+                }}
+                className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 px-3 py-2 bg-space-800/95 backdrop-blur-sm border border-white/10 rounded-lg whitespace-nowrap pointer-events-none z-50"
+            >
+                <div className="text-xs font-semibold text-white">{label}</div>
+                <div className="text-xs mt-0.5" style={{ color }}>{age}</div>
+                {isRecommended && (
+                    <div className="text-[10px] text-cosmic-400 mt-1 flex items-center gap-1">
+                        <span className="w-1 h-1 rounded-full bg-cosmic-400" />
+                        Recommended
+                    </div>
+                )}
+            </motion.div>
+        </motion.div>
+    );
+};
 
 const HeroOrbitVisualization = () => {
     return (
         <div className="relative w-[500px] h-[500px] flex items-center justify-center">
+            {/* Ambient glow in center */}
+            <div className="absolute w-32 h-32 bg-cosmic-500/20 rounded-full blur-3xl" />
+
             {/* Central Node: You */}
             <div className="absolute z-20 flex flex-col items-center">
                 <motion.div
-                    className="w-4 h-4 bg-white rounded-full shadow-[0_0_20px_rgba(255,255,255,0.8)]"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                />
-                <span className="mt-2 text-xs font-medium text-white/80 tracking-widest uppercase">You, Today</span>
+                    className="relative"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                >
+                    {/* Outer ring */}
+                    <motion.div
+                        className="absolute inset-[-8px] border-2 border-white/30 rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    />
+                    {/* Core */}
+                    <div className="w-5 h-5 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.9)]" />
+                </motion.div>
+                <span className="mt-4 text-xs font-semibold text-white/90 tracking-[0.2em] uppercase">You, Today</span>
             </div>
 
-            {/* Orbit 1: Baseline */}
-            <div className="absolute w-[200px] h-[200px] border border-white/10 rounded-full animate-slow-spin">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-slate-400 rounded-full shadow-[0_0_10px_rgba(148,163,184,0.5)] group cursor-pointer">
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-space-800 border border-white/10 rounded text-xs text-slate-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                        Baseline • Age 65
-                    </div>
+            {/* Orbit 1: Baseline - Inner orbit */}
+            <motion.div
+                className="absolute w-[180px] h-[180px] rounded-full"
+                style={{
+                    border: '1px solid rgba(148, 163, 184, 0.15)',
+                    background: 'radial-gradient(circle, transparent 60%, rgba(148, 163, 184, 0.03) 100%)'
+                }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            >
+                {/* Orbit trail effect */}
+                <div className="absolute inset-0 rounded-full overflow-hidden">
+                    <motion.div
+                        className="absolute w-8 h-full bg-gradient-to-b from-transparent via-slate-400/20 to-transparent"
+                        style={{ left: '50%', transform: 'translateX(-50%)' }}
+                    />
                 </div>
-            </div>
-
-            {/* Orbit 2: Geo-Arbitrage */}
-            <div className="absolute w-[320px] h-[320px] border border-cyan-400/20 rounded-full animate-reverse-spin">
-                <div className="absolute bottom-[15%] right-[15%] w-4 h-4 bg-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.6)] group cursor-pointer">
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-space-800 border border-cyan-400/30 rounded text-xs text-cyan-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                        Geo-Arbitrage • Age 55
-                    </div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <OrbitNode
+                        size={12}
+                        color="#94A3B8"
+                        glowColor="rgba(148, 163, 184, 0.5)"
+                        label="Baseline Path"
+                        age="Age 65"
+                    />
                 </div>
-            </div>
+            </motion.div>
 
-            {/* Orbit 3: Upskilled (Recommended) */}
-            <div className="absolute w-[440px] h-[440px] border border-cosmic-500/30 rounded-full animate-slow-spin">
-                <div className="absolute top-[20%] left-[10%] w-5 h-5 bg-cosmic-500 rounded-full shadow-[0_0_25px_rgba(168,85,247,0.8)] group cursor-pointer">
-                    <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-space-800 border border-cosmic-500/30 rounded text-xs text-cosmic-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                        Skill-Boosted • Age 49
-                    </div>
+            {/* Orbit 2: Geo-Arbitrage - Middle orbit */}
+            <motion.div
+                className="absolute w-[300px] h-[300px] rounded-full"
+                style={{
+                    border: '1px solid rgba(34, 211, 238, 0.2)',
+                    background: 'radial-gradient(circle, transparent 60%, rgba(34, 211, 238, 0.02) 100%)'
+                }}
+                animate={{ rotate: -360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            >
+                <div className="absolute bottom-[10%] right-[10%]">
+                    <OrbitNode
+                        size={16}
+                        color="#22D3EE"
+                        glowColor="rgba(34, 211, 238, 0.6)"
+                        label="Geo-Arbitrage"
+                        age="Age 55"
+                    />
                 </div>
-            </div>
+            </motion.div>
 
-            {/* Decorative Gradients */}
-            <div className="absolute inset-0 bg-radial-gradient from-cosmic-500/10 to-transparent opacity-30 pointer-events-none" />
+            {/* Orbit 3: Upskilled - Outer orbit (Recommended) */}
+            <motion.div
+                className="absolute w-[420px] h-[420px] rounded-full"
+                style={{
+                    border: '1px solid rgba(168, 85, 247, 0.25)',
+                    background: 'radial-gradient(circle, transparent 60%, rgba(168, 85, 247, 0.03) 100%)'
+                }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+            >
+                <div className="absolute top-[15%] left-[8%]">
+                    <OrbitNode
+                        size={20}
+                        color="#A855F7"
+                        glowColor="rgba(168, 85, 247, 0.7)"
+                        label="Skill-Boosted"
+                        age="Age 49"
+                        isRecommended
+                    />
+                </div>
+            </motion.div>
+
+            {/* Decorative outer ring */}
+            <div className="absolute w-[480px] h-[480px] border border-white/5 rounded-full" />
+
+            {/* Radial gradient overlay */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.1) 0%, transparent 50%)'
+                }}
+            />
         </div>
     );
 };
