@@ -1,0 +1,25 @@
+{
+  "name": "retireme-demo",
+  "version": "1.0.0",
+  "description": "RetireMe video demo built with Remotion",
+  "type": "module",
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion bundle",
+    "render": "remotion render Demo out/demo.mp4",
+    "render:preview": "remotion render Demo out/demo-preview.mp4 --scale=0.5"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.3",
+    "tailwindcss": "^4.0.0"
+  }
+}
